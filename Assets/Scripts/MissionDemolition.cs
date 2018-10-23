@@ -12,10 +12,12 @@ public enum GameMode
 
 public class MissionDemolition : MonoBehaviour {
     static private MissionDemolition S;
+    static public int score = 1;
 
     [Header("Set in Inspector")]
     public Text uitLevel;
     public Text uitShots;
+    public Text uitHighScore;
     public Text uitButton;
     public Vector3 castlePos;
     public GameObject[] castles;
@@ -28,7 +30,19 @@ public class MissionDemolition : MonoBehaviour {
     public GameMode mode = GameMode.idle;
     public string showing = "Show Slingshot";
 
-
+    private void Awake()
+    {
+        if (PlayerPrefs.HasKey("MissionHighScore"))
+        {
+            //sets the high score to the number of levels if it is below the number of levels since you cant win a level with 0 shots
+            //theoretically the lowest number of shots is the same as the number of levels
+            if (PlayerPrefs.GetInt("MissionHighScore") < castles.Length)
+                        PlayerPrefs.SetInt("MissionHighScore", castles.Length);
+            score = PlayerPrefs.GetInt("MissionHighScore");
+        }
+        PlayerPrefs.SetInt("MissionHighScore", score);
+        print(levelMax);
+    }
     // Use this for initialization
     void Start ()
     {
@@ -36,6 +50,7 @@ public class MissionDemolition : MonoBehaviour {
         level = 0;
         levelMax = castles.Length;
         StartLevel();
+        
 
 	}
 
@@ -57,7 +72,7 @@ public class MissionDemolition : MonoBehaviour {
         shotsTaken = 0;
 
         SwitchView("Show Both");
-        ProjectileLine.S.Clear();
+       // ProjectileLine.S.Clear();
 
         Goal.goalMet = false;
 
@@ -68,14 +83,19 @@ public class MissionDemolition : MonoBehaviour {
 
     void UpdateGUI()
     {
+        
         uitLevel.text = "Level: " + (level + 1) + " of " + levelMax;
         uitShots.text = "Shots Taken: " + shotsTaken;
+        uitHighScore.text = "Least Shots Taken: " + score;
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
+        if (shotsTaken <= PlayerPrefs.GetInt("MissionHighScore") && Goal.goalMet)
+                        PlayerPrefs.SetInt("MissionHighScore", shotsTaken);
         UpdateGUI();
+        
 
         if((mode == GameMode.playing) && Goal.goalMet)
         {
@@ -83,6 +103,8 @@ public class MissionDemolition : MonoBehaviour {
             SwitchView("Show Both");
             Invoke("NextLevel", 2f);
         }
+
+        
 	}
 
     void NextLevel()
