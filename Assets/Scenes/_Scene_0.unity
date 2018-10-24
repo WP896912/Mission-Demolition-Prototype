@@ -678,6 +678,7 @@ MonoBehaviour:
   castles:
   - {fileID: 1396267086027974, guid: 2e1827cfc4cac6043a01ff8048e09e12, type: 2}
   - {fileID: 1363240163389798, guid: 8d34f6d660edea4408cbf5cc6417539a, type: 2}
+  - {fileID: 1352655446305416, guid: 51fe245971da5de4da809407f450c0d1, type: 2}
   level: 0
   levelMax: 0
   shotsTaken: 0
